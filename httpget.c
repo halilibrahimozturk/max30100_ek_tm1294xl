@@ -90,12 +90,10 @@ Void SWI_ISR(UArg arg1)
 {
 
     while(1){
-        int sendTime;
         Semaphore_pend(semaphore2, BIOS_WAIT_FOREVER);
-//        System_printf("Counter %d\n", ctr);
+
         Mailbox_post(mailbox1, &ctr, BIOS_NO_WAIT);
-        System_flush();
-        ctr++;
+
 
     }
 }
@@ -704,10 +702,7 @@ bool createTasks(void)
 
     Error_init(&eb);
 
-    Task_Params_init(&taskParams);
-        taskParams.stackSize = TASKSTACKSIZE;
-        taskParams.priority = 1;
-        taskHandle1 = Task_create((Task_FuncPtr)SWI_ISR, &taskParams, &eb);
+
 
     Task_Params_init(&taskParams);
     taskParams.stackSize = TASKSTACKSIZE;
@@ -733,6 +728,12 @@ bool createTasks(void)
        taskParams.stackSize = TASKSTACKSIZE;
        taskParams.priority = 1;
        taskHandle5 = Task_create((Task_FuncPtr)sleepTsk, &taskParams, &eb);
+
+
+       Task_Params_init(&taskParams);
+               taskParams.stackSize = TASKSTACKSIZE;
+               taskParams.priority = 1;
+               taskHandle1 = Task_create((Task_FuncPtr)SWI_ISR, &taskParams, &eb);
 
     if (taskHandle1 == NULL ||  taskHandle2 == NULL || taskHandle3 == NULL || taskHandle4 == NULL) {
         printError("netIPAddrHook: Failed to create HTTP, Socket and Server Tasks\n", -1);
